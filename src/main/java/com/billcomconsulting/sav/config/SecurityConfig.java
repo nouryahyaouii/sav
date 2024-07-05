@@ -30,4 +30,5 @@ public class SecurityConfig {
         })).csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(authorize -> authorize.requestMatchers("/auth/**", "/v2/api-docs", "/v3/api-docs", "/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui", "/configuration/security", "/swagger-ui/**", "/webjars/**", "/swagger-ui.html", "/api/**").permitAll().anyRequest().authenticated()).oauth2ResourceServer(auth -> auth.jwt(token -> token.jwtAuthenticationConverter(new JwtAuthConverter())));
         return http.build();
     }
+
 }
