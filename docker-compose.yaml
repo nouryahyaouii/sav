@@ -1,0 +1,61 @@
+version: "3"
+
+services:
+  sav-mysql:
+    container_name: sav-mysql
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sav
+    ports:
+      - "2206:3306"
+    volumes:
+      - sav_mysql_data:/var/lib/mysql
+    networks:
+      - sav-network
+
+  mysql:
+    container_name: sav-mysql-keycloak
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sav
+    ports:
+      - "3308:3306"
+    volumes:
+      - sav_mysql_keycloak_data:/var/lib/mysql
+    networks:
+      - sav-network
+
+
+  keycloak:
+    container_name: sav-keycloak
+    image: quay.io/keycloak/keycloak:24.0.2
+    ports:
+      - "8070:8080"
+    environment:
+      KC_DB: mysql
+      KC_DB_URL_DATABASE: sav
+      KC_DB_URL_HOST: mysql
+      KC_DB_URL_PORT: 3306
+      KC_DB_USERNAME: root
+      KC_DB_PASSWORD: root
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME_STRICT: "false"
+    command:
+      - start-dev
+    depends_on:
+      - mysql
+    networks:
+      - sav-network
+
+networks:
+  sav-network:
+    driver: bridge
+
+volumes:
+  sav_mysql_data:
+    driver: local
+  sav_mysql_keycloak_data:
+    driver: local
